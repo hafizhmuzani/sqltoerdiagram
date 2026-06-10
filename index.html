@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dbdiga · SQL → schema diagram</title>
+  <meta name="description" content="Paste a SQL schema script, get a clean interactive ER diagram. Fast, free, runs entirely in your browser." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗂️</text></svg>" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🗂️</span>
+      <span class="name">dbdiga</span>
+      <span class="tag">SQL&nbsp;→&nbsp;diagram</span>
+    </div>
+    <div class="actions">
+      <button id="btn-toggle-sql" class="btn ghost icon" title="Hide / show SQL panel">⬚</button>
+      <div class="menu-wrap">
+        <button id="btn-dialect" class="btn ghost" title="Target SQL dialect">PostgreSQL ▾</button>
+        <div id="dialect-menu" class="menu" hidden></div>
+      </div>
+      <span class="divider"></span>
+      <button id="btn-example" class="btn ghost" title="Load a sample schema">Example</button>
+      <div class="menu-wrap">
+        <button id="btn-arrange" class="btn ghost" title="Auto-arrange tables">Arrange ▾</button>
+        <div id="arrange-menu" class="menu" hidden>
+          <div class="menu-label">Direction</div>
+          <button class="menu-item" data-dir="LR">Horizontal&nbsp;→</button>
+          <button class="menu-item" data-dir="TB">Vertical&nbsp;↓</button>
+          <div class="menu-sep"></div>
+          <div class="menu-label">Spacing</div>
+          <button class="menu-item" data-spacing="compact">Compact</button>
+          <button class="menu-item" data-spacing="comfortable">Comfortable</button>
+          <button class="menu-item" data-spacing="spacious">Spacious</button>
+        </div>
+      </div>
+      <button id="btn-fit" class="btn ghost" title="Fit diagram to screen">Fit</button>
+      <span class="divider"></span>
+      <button id="btn-open" class="btn ghost" title="Open a saved project (.dbdiga.json)">Open</button>
+      <button id="btn-save" class="btn ghost" title="Save SQL + layout to a file">Save</button>
+      <button id="btn-share" class="btn ghost" title="Copy a shareable link (data lives in the URL, nothing stored on a server)">Share</button>
+      <input id="file-open" type="file" accept=".json,application/json" hidden />
+      <span class="divider"></span>
+      <button id="btn-png" class="btn ghost" title="Export as PNG">PNG</button>
+      <button id="btn-svg" class="btn ghost" title="Export as SVG">SVG</button>
+      <span class="divider"></span>
+      <button id="btn-theme" class="btn ghost icon" title="Toggle light / dark">◐</button>
+    </div>
+  </header>
+
+  <main class="layout" id="layout">
+    <section class="editor-pane" id="editor-pane">
+      <div class="pane-head">
+        <span>SQL schema</span>
+        <span id="status" class="status"></span>
+      </div>
+      <div class="editor-stack">
+        <pre class="hl" aria-hidden="true"><code id="hl"></code></pre>
+        <textarea id="sql" spellcheck="false" autocomplete="off" autocapitalize="off"
+          placeholder="Paste your CREATE TABLE statements here…"></textarea>
+      </div>
+    </section>
+
+    <div class="splitter" id="splitter" title="Drag to resize"></div>
+
+    <section class="canvas-pane">
+      <canvas id="canvas"></canvas>
+      <div id="empty" class="empty-hint">
+        <div class="empty-card">
+          <h2>Paste SQL, see the schema.</h2>
+          <p>Drop your <code>CREATE TABLE</code> statements on the left. Drag tables, scroll to zoom, double-click to rename, export when done.</p>
+          <button id="btn-example2" class="btn primary">Load example schema</button>
+        </div>
+      </div>
+      <div class="tool-palette">
+        <button id="tool-note" class="btn ghost" title="Add a sticky note">🗒 Note</button>
+        <button id="tool-group" class="btn ghost" title="Add a group box">▢ Group</button>
+      </div>
+      <div class="zoom-controls">
+        <button id="zoom-out" class="btn ghost icon" title="Zoom out">−</button>
+        <button id="zoom-reset" class="btn ghost" title="Reset zoom">100%</button>
+        <button id="zoom-in" class="btn ghost icon" title="Zoom in">+</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
