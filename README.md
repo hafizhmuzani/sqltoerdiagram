@@ -1,14 +1,15 @@
-# 🗂️ dbdiga
+# SQL to ER Diagram — free online ERD generator
 
-Paste a SQL schema script → get a clean, interactive ER diagram. Free, fast, and
-runs **entirely in your browser** — no server, no signup, nothing leaves the page.
+Paste a SQL schema (`CREATE TABLE` statements) → get a clean, interactive ER diagram.
+**Open source and 100% local** — it runs entirely in your browser, so your schema never
+leaves your machine. No server, no signup, no upload. Live at **https://sqltoerdiagram.com**.
 
-![dbdiga](https://img.shields.io/badge/deps-2-blue) ![bundle](https://img.shields.io/badge/bundle-22KB%20gzip-brightgreen)
+![deps](https://img.shields.io/badge/deps-2-blue) ![bundle](https://img.shields.io/badge/bundle-32KB%20gzip-brightgreen)
 
 ## Why
 
-Every other SQL-diagram tool is either paywalled, ugly, or slow. dbdiga is a single
-static page that:
+Every other SQL-diagram tool is either paywalled, ugly, or slow. SQL to ER Diagram is a
+single static page that:
 
 - Parses `CREATE TABLE` / `ALTER TABLE` DDL (MySQL, Postgres, SQL-Server-ish).
 - Renders tables on a **canvas** with cached bitmaps + viewport culling, so it stays
@@ -28,7 +29,7 @@ static page that:
   camera persist automatically, so reloading restores your exact layout instead of
   re-arranging. Editing SQL keeps your manual positions; only brand-new tables get
   auto-placed (beside the rest). **Arrange** re-runs auto-layout when you want it.
-- **Save / Open projects**: **Save** downloads a `.dbdiga.json` (SQL + layout + camera
+- **Save / Open projects**: **Save** downloads a `.json` project (SQL + layout + camera
   + dialect); **Open** loads one back. Keep multiple diagrams or share them.
 - **Share link**: **Share** copies a URL with the entire project (SQL + node positions
   + camera + dialect) encoded in the URL hash — gzip-compressed + base64. The data

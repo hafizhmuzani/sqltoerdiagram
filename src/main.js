@@ -299,11 +299,12 @@ for (const [key, d] of Object.entries(DIALECTS)) {
   const b = document.createElement('button');
   b.className = 'menu-item';
   b.dataset.dialect = key;
+  b.dataset.umamiEvent = 'dialect-' + key;
   b.textContent = d.label;
   dialectMenu.appendChild(b);
 }
 function syncDialect() {
-  dialectBtn.textContent = DIALECTS[dialect].label + ' ▾';
+  dialectBtn.textContent = DIALECTS[dialect].label;
   for (const el of dialectMenu.querySelectorAll('[data-dialect]'))
     el.classList.toggle('active', el.dataset.dialect === dialect);
   diagram.typeSuggestions = DIALECTS[dialect].types;
@@ -324,22 +325,16 @@ dialectMenu.addEventListener('click', (e) => {
 });
 document.addEventListener('click', () => { dialectMenu.hidden = true; });
 
-// ---- hide / show SQL panel ----
+// ---- hide / show SQL panel (collapse from inside the panel, reopen from the canvas) ----
 const layoutEl = $('layout');
-const toggleSqlBtn = $('btn-toggle-sql');
-let sqlHidden = localStorage.getItem('dbdiga-sql-hidden') === '1';
-function syncSqlPanel() {
-  layoutEl.classList.toggle('sql-hidden', sqlHidden);
-  toggleSqlBtn.classList.toggle('active', sqlHidden);
-  toggleSqlBtn.title = sqlHidden ? 'Show SQL panel' : 'Hide SQL panel';
+function setSqlHidden(hidden) {
+  localStorage.setItem('dbdiga-sql-hidden', hidden ? '1' : '0');
+  layoutEl.classList.toggle('sql-hidden', hidden);
   diagram.resize();
 }
-toggleSqlBtn.addEventListener('click', () => {
-  sqlHidden = !sqlHidden;
-  localStorage.setItem('dbdiga-sql-hidden', sqlHidden ? '1' : '0');
-  syncSqlPanel();
-});
-syncSqlPanel();
+$('btn-collapse-sql').addEventListener('click', () => setSqlHidden(true));
+$('btn-open-sql').addEventListener('click', () => setSqlHidden(false));
+setSqlHidden(localStorage.getItem('dbdiga-sql-hidden') === '1');
 
 $('zoom-in').addEventListener('click', () => diagram.zoomBy(1.25));
 $('zoom-out').addEventListener('click', () => diagram.zoomBy(0.8));
@@ -385,7 +380,7 @@ $('btn-save').addEventListener('click', () => {
   };
   const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  download('schema.dbdiga.json', url);
+  download('schema.sqltoerdiagram.json', url);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 
