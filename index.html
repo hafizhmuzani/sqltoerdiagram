@@ -54,7 +54,11 @@
     ]
   }
   </script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235aa7ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><ellipse cx='12' cy='5' rx='9' ry='3'/><path d='M3 5v14a9 3 0 0 0 18 0V5'/><path d='M3 12a9 3 0 0 0 18 0'/></svg>" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/icon-96.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
   <!-- Umami: privacy-friendly, cookieless analytics (anonymous page views only; never sees your SQL/schema) -->
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27b5b4ba-93ad-4ef3-aaa0-af516881d308"></script>
@@ -102,8 +106,7 @@
       <button id="btn-png" class="btn ghost" title="Export as PNG" data-umami-event="export-png">PNG</button>
       <button id="btn-svg" class="btn ghost" title="Export as SVG" data-umami-event="export-svg">SVG</button>
       <span class="divider"></span>
-      <!-- TODO: set href to your repo, e.g. https://github.com/<you>/sql-to-er-diagram -->
-      <a id="link-github" class="btn ghost icon" href="https://github.com/" target="_blank" rel="noopener noreferrer"
+      <a id="link-github" class="btn ghost icon" href="https://github.com/royalbhati/sqltoerdiagram" target="_blank" rel="noopener noreferrer"
          title="View source on GitHub — SQL to ER Diagram is open source" aria-label="GitHub repository" data-umami-event="github">
         <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
           <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
