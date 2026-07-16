@@ -392,13 +392,26 @@ sqlEl.addEventListener('input', () => {
 });
 
 // ---- buttons ----
-function loadExample() {
-  sqlEl.value = EXAMPLE_SQL;
+function loadExample(key) {
+  const sql = (key && EXAMPLE_SQL[key]) || EXAMPLE_SQL.ecommerce;
+  sqlEl.value = sql;
   firstRender = true;
   rebuild({ arrange: true });
 }
-$('btn-example').addEventListener('click', loadExample);
-$('btn-example2')?.addEventListener('click', loadExample);
+$('btn-example').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const m = $('example-menu');
+  m.hidden = !m.hidden;
+});
+$('example-menu').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const item = e.target.closest('[data-template]');
+  if (!item) return;
+  $('example-menu').hidden = true;
+  loadExample(item.dataset.template);
+});
+document.addEventListener('click', () => { $('example-menu').hidden = true; });
+$('btn-example2')?.addEventListener('click', () => loadExample('ecommerce'));
 
 // Arrange button: re-arrange with current opts; the ▾ part toggles the menu.
 const arrangeMenu = $('arrange-menu');
@@ -592,9 +605,42 @@ function exportImage(kind) {
   if (kind === 'png') {
     const url = diagram.exportPNG(2);
     if (url) download('schema.png', url);
-  } else {
+  } else if (kind === 'svg') {
     const svg = exportSVG(diagram.model, diagram.themeName, diagram.annotations, diagram.hidden);
     if (svg) downloadText('schema.svg', svg, 'image/svg+xml');
+  } else if (kind === 'pdf') {
+    // PDF Print Hack: create a hidden iframe containing the SVG and trigger print()
+    const svg = exportSVG(diagram.model, 'light', diagram.annotations, diagram.hidden);
+    if (!svg) return;
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+    document.body.appendChild(iframe);
+    iframe.contentDocument.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>SchemaCanvas PDF</title>
+        <style>
+          @page { size: auto; margin: 0; }
+          body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: white; }
+          svg { max-width: 100%; max-height: 100vh; }
+        </style>
+      </head>
+      <body>
+        ${svg}
+        <script>
+          window.onload = () => {
+            window.print();
+            setTimeout(() => parent.document.body.removeChild(parent.document.querySelector('iframe')), 1000);
+          };
+        </script>
+      </body>
+      </html>
+    `);
+    iframe.contentDocument.close();
   }
 }
 
@@ -608,7 +654,7 @@ exportMenu.addEventListener('click', (e) => {
   if (!item) return;
   exportMenu.hidden = true;
   const kind = item.dataset.export;
-  if (kind === 'png' || kind === 'svg') { exportImage(kind); return; }
+  if (kind === 'png' || kind === 'svg' || kind === 'pdf') { exportImage(kind); return; }
   const s = SERIALIZERS[kind];
   if (!s) return;
   const text = serialize(diagram.model, kind);
@@ -619,7 +665,7 @@ document.addEventListener('click', () => { exportMenu.hidden = true; });
 // ---- Save / Open project (SQL + layout + camera + dialect) ----
 $('btn-save').addEventListener('click', () => {
   const project = {
-    app: 'dbdiga',
+    app: 'schemacanvas',
     version: 1,
     sql: sqlEl.value,
     dialect,
@@ -639,7 +685,7 @@ function flashButton(btn, text) {
 }
 $('btn-share').addEventListener('click', async () => {
   const btn = $('btn-share');
-  const project = { app: 'dbdiga', version: 1, sql: sqlEl.value, dialect, ...collectLayout() };
+  const project = { app: 'schemacanvas', version: 1, sql: sqlEl.value, dialect, ...collectLayout() };
   let payload;
   try { payload = await encodeShare(project); }
   catch (err) { console.error(err); flashButton(btn, 'Failed'); return; }
@@ -652,7 +698,7 @@ $('btn-share').addEventListener('click', async () => {
 
 // ---- Embed: an <iframe> snippet that renders this diagram read-only & live ----
 $('btn-embed').addEventListener('click', async () => {
-  const project = { app: 'dbdiga', version: 1, sql: sqlEl.value, dialect, ...collectLayout() };
+  const project = { app: 'schemacanvas', version: 1, sql: sqlEl.value, dialect, ...collectLayout() };
   let payload;
   try { payload = await encodeShare(project); }
   catch (err) { console.error(err); return; }
@@ -738,11 +784,11 @@ if (isEmbed) {
   brand.target = '_blank';
   brand.rel = 'noopener';
   brand.href = location.origin + location.pathname + location.hash; // open full editor, same diagram
-  brand.title = 'Open in SQL to ER Diagram';
+  brand.title = 'Open in SchemaCanvas';
   brand.innerHTML =
     '<span class="logo" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
     '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg></span>' +
-    'sqltoerdiagram.com';
+    'schemacanvas.com';
   document.querySelector('.canvas-pane').appendChild(brand);
 }
 
