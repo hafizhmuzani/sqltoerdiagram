@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SQL to ER Diagram — Free Online ERD Generator from SQL (no signup)</title>
+  <title>SchemaCanvas — Free Online ERD Generator from SQL (no signup)</title>
   <meta name="description" content="SQL to ER diagram: paste your SQL schema (CREATE TABLE statements) and instantly generate a clean, interactive ER diagram (ERD) online. Also supports Prisma, SQLAlchemy and Sequelize. Free, open source, runs entirely in your browser — no signup, nothing uploaded." />
-  <meta name="keywords" content="sql to er diagram, sql to diagram, sqltoerdiagram, er diagram from sql, generate er diagram from sql, ddl to erd, database schema diagram, sql schema visualizer, create er diagram from sql, prisma to er diagram, prisma schema visualizer, sqlalchemy er diagram, sequelize er diagram" />
-  <link rel="canonical" href="https://sqltoerdiagram.com/" />
+  <meta name="keywords" content="sql to er diagram, sql to diagram, schemacanvas, er diagram from sql, generate er diagram from sql, ddl to erd, database schema diagram, sql schema visualizer, create er diagram from sql, prisma to er diagram, prisma schema visualizer, sqlalchemy er diagram, sequelize er diagram" />
+  <link rel="canonical" href="https://schemacanvas.com/" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://sqltoerdiagram.com/" />
-  <meta property="og:title" content="SQL to ER Diagram — Free Online ERD Generator from SQL" />
+  <meta property="og:url" content="https://schemacanvas.com/" />
+  <meta property="og:title" content="SchemaCanvas — Free Online ERD Generator from SQL" />
   <meta property="og:description" content="Paste a SQL schema and instantly generate a clean, interactive ER diagram. Free, open source, runs in your browser — nothing uploaded." />
-  <meta property="og:image" content="https://sqltoerdiagram.com/og.png" />
+  <meta property="og:image" content="https://schemacanvas.com/og.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="SQL to ER Diagram — Free Online ERD Generator from SQL" />
+  <meta name="twitter:title" content="SchemaCanvas — Free Online ERD Generator from SQL" />
   <meta name="twitter:description" content="Paste a SQL schema, get an interactive ER diagram. Free, open source, in-browser." />
-  <meta name="twitter:image" content="https://sqltoerdiagram.com/og.png" />
+  <meta name="twitter:image" content="https://schemacanvas.com/og.png" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "SQL to ER Diagram",
-    "url": "https://sqltoerdiagram.com/",
+    "name": "SchemaCanvas",
+    "url": "https://schemacanvas.com/",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any (web browser)",
     "description": "Paste a SQL schema (CREATE TABLE statements) and instantly generate a clean, interactive ER diagram. Free, open source, runs entirely in your browser.",
@@ -40,11 +40,11 @@
     "@type": "FAQPage",
     "mainEntity": [
       { "@type": "Question", "name": "How do I create an ER diagram from SQL?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Paste your SQL CREATE TABLE statements into the editor and SQL to ER Diagram instantly renders an interactive entity-relationship diagram. Drag tables to arrange them, then export as PNG or SVG." } },
+        "acceptedAnswer": { "@type": "Answer", "text": "Paste your SQL CREATE TABLE statements into the editor and SchemaCanvas instantly renders an interactive entity-relationship diagram. Drag tables to arrange them, then export as PNG or SVG." } },
       { "@type": "Question", "name": "Which SQL dialects are supported?",
         "acceptedAnswer": { "@type": "Answer", "text": "It parses standard CREATE TABLE and ALTER TABLE DDL and works with PostgreSQL, MySQL, SQLite, SQL Server, Snowflake and BigQuery syntax, including primary keys, foreign keys, unique and not-null constraints." } },
       { "@type": "Question", "name": "Is it free?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. SQL to ER Diagram is completely free and open source, with no account or sign-up required." } },
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. SchemaCanvas is completely free and open source, with no account or sign-up required." } },
       { "@type": "Question", "name": "Is my data private? Does my SQL get uploaded?",
         "acceptedAnswer": { "@type": "Answer", "text": "Everything runs locally in your browser. Your SQL schema is never uploaded to or stored on any server." } },
       { "@type": "Question", "name": "Can I export the diagram?",
@@ -64,7 +64,7 @@
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27b5b4ba-93ad-4ef3-aaa0-af516881d308"></script>
 </head>
 <body>
-  <h1 class="sr-only">SQL to ER Diagram — free online ERD generator: convert a SQL schema (CREATE TABLE statements) into an interactive entity-relationship diagram in your browser. Turn SQL into a diagram instantly, no signup.</h1>
+  <h1 class="sr-only">SchemaCanvas — free online ERD generator: convert a SQL schema (CREATE TABLE statements) into an interactive entity-relationship diagram in your browser. Turn SQL into a diagram instantly, no signup.</h1>
 
   <header class="topbar">
     <div class="brand">
@@ -86,7 +86,14 @@
         <div id="dialect-menu" class="menu" hidden></div>
       </div>
       <span class="divider"></span>
-      <button id="btn-example" class="btn ghost" title="Load a sample schema" data-umami-event="load-example">Example</button>
+      <div class="menu-wrap">
+        <button id="btn-example" class="btn ghost caret" title="Load a sample schema" data-umami-event="load-example">Template</button>
+        <div id="example-menu" class="menu" hidden>
+          <button class="menu-item" data-template="ecommerce">E-Commerce</button>
+          <button class="menu-item" data-template="blog">Blog / CMS</button>
+          <button class="menu-item" data-template="saas">SaaS (B2B)</button>
+        </div>
+      </div>
       <div class="menu-wrap">
         <button id="btn-arrange" class="btn ghost caret" title="Auto-arrange tables" data-umami-event="arrange">Arrange</button>
         <div id="arrange-menu" class="menu" hidden>
@@ -115,6 +122,7 @@
           <div class="menu-label">Image</div>
           <button class="menu-item" data-export="png">PNG</button>
           <button class="menu-item" data-export="svg">SVG</button>
+          <button class="menu-item" data-export="pdf">PDF</button>
           <div class="menu-sep"></div>
           <div class="menu-label">Code</div>
           <button class="menu-item" data-export="mermaid">Mermaid</button>
@@ -123,8 +131,8 @@
         </div>
       </div>
       <span class="divider"></span>
-      <a id="link-github" class="btn ghost icon" href="https://github.com/royalbhati/sqltoerdiagram" target="_blank" rel="noopener noreferrer"
-         title="View source on GitHub — SQL to ER Diagram is open source" aria-label="GitHub repository" data-umami-event="github">
+      <a id="link-github" class="btn ghost icon" href="https://github.com/royalbhati/schemacanvas" target="_blank" rel="noopener noreferrer"
+         title="View source on GitHub — SchemaCanvas is open source" aria-label="GitHub repository" data-umami-event="github">
         <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
           <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
         </svg>
@@ -211,9 +219,9 @@
   </main>
 
   <!-- Crawlable content for search engines (long-tail keywords + matches the FAQ schema) -->
-  <section class="sr-only" aria-label="About SQL to ER Diagram">
-    <h2>SQL to ER Diagram — free online ERD generator</h2>
-    <p>SQL to ER Diagram is a free, open-source tool that converts a SQL schema into an
+  <section class="sr-only" aria-label="About SchemaCanvas">
+    <h2>SchemaCanvas — free online ERD generator</h2>
+    <p>SchemaCanvas is a free, open-source tool that converts a SQL schema into an
       interactive entity-relationship diagram (ERD) right in your browser. Paste your
       <code>CREATE TABLE</code> statements and instantly visualize tables, columns, primary
       keys, foreign keys and relationships. Works with PostgreSQL, MySQL, SQLite and SQL
@@ -249,7 +257,7 @@
       with PostgreSQL, MySQL, SQLite, SQL Server, Snowflake and BigQuery syntax, including primary
       keys, foreign keys, unique and not-null constraints.</p>
     <h3>Is it free?</h3>
-    <p>Yes. SQL to ER Diagram is completely free and open source, with no account or sign-up
+    <p>Yes. SchemaCanvas is completely free and open source, with no account or sign-up
       required.</p>
     <h3>Is my data private? Does my SQL get uploaded?</h3>
     <p>Everything runs locally in your browser. Your SQL schema is never uploaded to or stored
