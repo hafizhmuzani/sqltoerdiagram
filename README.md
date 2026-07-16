@@ -1,4 +1,4 @@
-# SQL to ER Diagram
+# SchemaCanvas
 
 **A free, open-source online ERD generator.** Paste a SQL schema (`CREATE TABLE`
 statements) → get a clean, interactive entity-relationship diagram.
@@ -7,11 +7,11 @@ statements) → get a clean, interactive entity-relationship diagram.
 
 **100% local · no signup · no upload.** It runs entirely in your browser, so your
 schema never leaves your machine — no server, no backend. Live at
-**[sqltoerdiagram.com](https://sqltoerdiagram.com)**.
+**[schemacanvas.com](https://schemacanvas.com)**.
 
 ## Why
 
-Every other SQL-diagram tool is either paywalled, ugly, or slow. SQL to ER Diagram is
+Every other SQL-diagram tool is either paywalled, ugly, or slow. SchemaCanvas is
 a single static page that stays smooth at **hundreds of tables**, edits your SQL
 two-way, and shares a whole diagram in a single link — with no account and nothing
 leaving your browser.
