@@ -387,6 +387,9 @@ a.btn { text-decoration: none; color: var(--text); }
   flex-direction: column;
   gap: 6px;
 }
+.vb-table-card .vb-table-body[hidden] {
+  display: none !important;
+}
 .vb-chevron {
   font-size: 10px;
   display: inline-block;

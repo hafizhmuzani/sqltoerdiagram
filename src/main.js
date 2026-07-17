@@ -840,6 +840,9 @@ function renderVisualBuilder() {
     chevron.className = 'vb-chevron';
     chevron.innerHTML = '&#9654;';
     chevron.style.transition = 'transform 0.15s';
+    
+    // Default tertutup
+    chevron.style.transform = '';
 
     const title = document.createElement('span');
     title.className = 'vb-table-title';
