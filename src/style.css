@@ -347,6 +347,169 @@ a.btn { text-decoration: none; color: var(--text); }
   line-height: 1.5;
 }
 
+.vb-tables-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vb-table-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.vb-table-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--panel-2);
+  border-bottom: 1px solid transparent;
+  transition: background 0.12s, border-color 0.12s;
+}
+.vb-table-header:hover {
+  background: var(--border);
+}
+.vb-table-card .vb-table-body {
+  border-top: 1px solid var(--border);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vb-chevron {
+  font-size: 10px;
+  display: inline-block;
+  color: var(--muted);
+  transform-origin: center;
+}
+.vb-table-title {
+  flex: 1;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: 0.02em;
+}
+.vb-col-count {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+.vb-col-head {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 60px 26px;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding: 0 2px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.vb-col-head .vb-flag-head {
+  text-align: center;
+}
+.vb-col-head span:last-child {
+  text-align: right;
+}
+.vb-col-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 60px 26px;
+  gap: 6px;
+  align-items: center;
+}
+.vb-input {
+  font: inherit;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  padding: 4px 6px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  outline: none;
+  min-width: 0;
+}
+.vb-input:focus {
+  border-color: var(--accent);
+}
+.vb-flags {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+.vb-flag {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px;
+  height: 22px;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+  text-transform: uppercase;
+  transition: all 0.12s;
+}
+.vb-flag:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+.vb-flag.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.vb-del-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+  width: 26px;
+  height: 22px;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.12s;
+}
+.vb-del-btn:hover {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.vb-add-col-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.12s;
+}
+.vb-add-col-btn:hover {
+  border-style: solid;
+  border-color: var(--text);
+  color: var(--text);
+}
+
 .layout.sql-hidden .editor-pane,
 .layout.sql-hidden .splitter { display: none; }
 .pane-head {

@@ -754,7 +754,7 @@ window.addEventListener('mouseup', () => {
   if (dragSplit) { dragSplit = null; document.body.style.cursor = ''; }
 });
 
-// ---- tablist switching (Code / Visual / Split) ----
+// ---- tablist switching (Code / Visual) ----
 const tabButtons = document.querySelectorAll('.tablist .tab');
 const editorStack = $('editor-stack');
 const visualBuilder = $('visual-builder');
@@ -781,13 +781,6 @@ function setEditorMode(mode) {
   } else if (mode === 'visual') {
     editorStack.hidden = true;
     visualBuilder.hidden = false;
-    editorPane.style.width = 'var(--editor-w)';
-    splitter.style.display = '';
-    renderVisualBuilder();
-  } else if (mode === 'split') {
-    // split mode: show both stacked vertically in the sidebar
-    editorStack.hidden = false;
-    visualBuilder.hidden = false;
     editorPane.style.width = '480px';
     splitter.style.display = '';
     renderVisualBuilder();
@@ -802,7 +795,29 @@ tabButtons.forEach(btn => {
   });
 });
 
-// A simple UI builder to modify tables list interactively (add columns, etc)
+// ---- Visual Builder: dropdown tables, editable columns with PK/U/NN/✕ ----
+
+function generateSQLFromModel() {
+  const tables = diagram.model.tables;
+  if (!tables || !tables.length) return;
+  const parts = [];
+  for (const table of tables) {
+    const colLines = [];
+    for (const col of table.columns) {
+      let line = `  ${col.name.padEnd(28)} ${(col.type || 'INT').toUpperCase()}`;
+      if (col.pk) line += ' PRIMARY KEY';
+      if (col.nn) line += ' NOT NULL';
+      if (col.uq) line += ' UNIQUE';
+      colLines.push(line);
+    }
+    parts.push(`CREATE TABLE ${table.name} (\n${colLines.join(',\n')}\n);`);
+  }
+  sqlEl.value = parts.join('\n\n');
+  localStorage.setItem('dbdiga-sql', sqlEl.value);
+  syncHighlight();
+  rebuild();
+}
+
 function renderVisualBuilder() {
   if (!diagram.model || !diagram.model.tables) return;
   const tables = diagram.model.tables;
@@ -816,62 +831,123 @@ function renderVisualBuilder() {
   tables.forEach(table => {
     const card = document.createElement('div');
     card.className = 'vb-table-card';
-    card.style.border = '1px solid var(--border)';
-    card.style.background = 'var(--panel)';
-    card.style.padding = '12px';
-    card.style.marginBottom = '10px';
-    card.style.borderRadius = '2px';
 
+    // --- header row (clickable to toggle dropdown) ---
     const header = document.createElement('div');
-    header.style.display = 'flex';
-    header.style.justifyContent = 'space-between';
-    header.style.alignItems = 'center';
-    header.style.marginBottom = '8px';
+    header.className = 'vb-table-header';
 
-    const title = document.createElement('strong');
+    const chevron = document.createElement('span');
+    chevron.className = 'vb-chevron';
+    chevron.innerHTML = '&#9654;';
+    chevron.style.transition = 'transform 0.15s';
+
+    const title = document.createElement('span');
+    title.className = 'vb-table-title';
     title.textContent = table.name;
-    title.style.fontSize = '12px';
-    title.style.textTransform = 'uppercase';
 
-    const addColBtn = document.createElement('button');
-    addColBtn.className = 'btn ghost';
-    addColBtn.style.padding = '2px 6px';
-    addColBtn.style.fontSize = '10px';
-    addColBtn.textContent = '+ Col';
-    addColBtn.onclick = () => {
-      diagram.onAddColumn(table.key);
-      renderVisualBuilder();
-    };
+    const colCount = document.createElement('span');
+    colCount.className = 'vb-col-count';
+    colCount.textContent = table.columns.length + ' cols';
 
-    header.append(title, addColBtn);
-    card.appendChild(header);
+    header.append(chevron, title, colCount);
 
-    const colsList = document.createElement('div');
-    colsList.style.display = 'flex';
-    colsList.style.flexDirection = 'column';
-    colsList.style.gap = '4px';
+    // --- dropdown body (hidden by default) ---
+    const body = document.createElement('div');
+    body.className = 'vb-table-body';
+    body.hidden = true;
 
+    // column header row
+    const colHead = document.createElement('div');
+    colHead.className = 'vb-col-head';
+    colHead.innerHTML = '<span>Name</span><span>Type</span><span class="vb-flag-head">P U N</span><span></span>';
+    body.appendChild(colHead);
+
+    // --- each column ---
     table.columns.forEach(col => {
       const row = document.createElement('div');
-      row.style.display = 'flex';
-      row.style.justifyContent = 'space-between';
-      row.style.alignItems = 'center';
-      row.style.fontSize = '11px';
-      row.style.color = 'var(--muted)';
+      row.className = 'vb-col-row';
 
-      const nameSpan = document.createElement('span');
-      nameSpan.textContent = col.name + (col.pk ? ' (PK)' : '') + (col.fk ? ' (FK)' : '');
-      nameSpan.style.fontFamily = 'ui-monospace, monospace';
+      const nameInput = document.createElement('input');
+      nameInput.className = 'vb-input vb-name-input';
+      nameInput.type = 'text';
+      nameInput.value = col.name;
+      nameInput.title = 'Column name';
+      nameInput.addEventListener('change', () => {
+        col.name = nameInput.value.trim() || col.name;
+        generateSQLFromModel();
+      });
 
-      const typeSpan = document.createElement('span');
-      typeSpan.textContent = col.type || 'int';
-      typeSpan.style.fontFamily = 'ui-monospace, monospace';
+      const typeInput = document.createElement('input');
+      typeInput.className = 'vb-input vb-type-input';
+      typeInput.type = 'text';
+      typeInput.value = (col.type || 'INT').toUpperCase();
+      typeInput.title = 'Column type';
+      typeInput.addEventListener('change', () => {
+        col.type = typeInput.value.trim() || col.type;
+        generateSQLFromModel();
+      });
 
-      row.append(nameSpan, typeSpan);
-      colsList.appendChild(row);
+      const flags = document.createElement('div');
+      flags.className = 'vb-flags';
+
+      const mkFlag = (label, key, colRef) => {
+        const f = document.createElement('button');
+        f.className = 'vb-flag' + (colRef[key] ? ' active' : '');
+        f.textContent = label;
+        f.title = {
+          P: 'Primary Key', U: 'Unique', N: 'Not Null'
+        }[label] || label;
+        f.addEventListener('click', (e) => {
+          e.stopPropagation();
+          colRef[key] = !colRef[key];
+          f.classList.toggle('active', colRef[key]);
+          generateSQLFromModel();
+        });
+        return f;
+      };
+
+      flags.append(mkFlag('P', 'pk', col), mkFlag('U', 'uq', col), mkFlag('N', 'nn', col));
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'vb-del-btn';
+      delBtn.innerHTML = '&#10005;';
+      delBtn.title = 'Remove column';
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = table.columns.indexOf(col);
+        if (idx >= 0) table.columns.splice(idx, 1);
+        generateSQLFromModel();
+        renderVisualBuilder();
+      });
+
+      row.append(nameInput, typeInput, flags, delBtn);
+      body.appendChild(row);
     });
 
-    card.appendChild(colsList);
+    // --- add column button ---
+    const addColRow = document.createElement('button');
+    addColRow.className = 'vb-add-col-btn';
+    addColRow.textContent = '+ Add column';
+    addColRow.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const existing = new Set(table.columns.map(c => c.name.toLowerCase()));
+      let name = 'new_column', i = 2;
+      while (existing.has(name.toLowerCase())) name = `new_column_${i++}`;
+      table.columns.push({ name, type: 'INT', pk: false, nn: false, uq: false });
+      generateSQLFromModel();
+      renderVisualBuilder();
+    });
+    body.appendChild(addColRow);
+
+    // --- toggle dropdown ---
+    let open = false;
+    header.addEventListener('click', () => {
+      open = !open;
+      body.hidden = !open;
+      chevron.style.transform = open ? 'rotate(90deg)' : '';
+    });
+
+    card.append(header, body);
     vbTables.appendChild(card);
   });
 }
@@ -882,14 +958,14 @@ $('vb-add-table')?.addEventListener('click', () => {
   const existing = new Set(fresh.tables.map(t => t.name.toLowerCase()));
   let name = 'new_table', i = 2;
   while (existing.has(name.toLowerCase())) name = `new_table_${i++}`;
-
-  const newSql = sql + `\n\nCREATE TABLE ${name} (\n  id BIGINT PRIMARY KEY\n);`;
+  const newSql = sql + `\n\nCREATE TABLE ${name} (\n  id INT PRIMARY KEY\n);`;
   sqlEl.value = newSql;
   rebuild({ arrange: true });
   renderVisualBuilder();
 });
 
-window.addEventListener('resize', () => diagram.resize());
+// ---- init editor mode tab from localStorage ----
+setEditorMode(editorMode);
 
 // keyboard shortcuts
 window.addEventListener('keydown', (e) => {
