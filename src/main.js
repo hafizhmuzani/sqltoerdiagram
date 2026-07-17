@@ -759,7 +759,6 @@ const tabButtons = document.querySelectorAll('.tablist .tab');
 const editorStack = $('editor-stack');
 const visualBuilder = $('visual-builder');
 const vbTables = $('vb-tables');
-const vbEmpty = visualBuilder.querySelector('.vb-empty');
 
 let editorMode = localStorage.getItem('schemacanvas-mode') || 'code';
 
@@ -823,10 +822,25 @@ function renderVisualBuilder() {
   const tables = diagram.model.tables;
   vbTables.innerHTML = '';
   if (tables.length === 0) {
-    vbEmpty.hidden = false;
+    // Show + Add table button even when empty
+    const emptyAddBtn = document.createElement('button');
+    emptyAddBtn.className = 'vb-add-col-btn';
+    emptyAddBtn.style.borderColor = 'var(--accent)';
+    emptyAddBtn.style.color = 'var(--accent)';
+    emptyAddBtn.textContent = '+ Add table';
+    emptyAddBtn.addEventListener('click', () => {
+      const fresh = parseSchema(sqlEl.value, 'sql');
+      const existing = new Set(fresh.tables.map(t => t.name.toLowerCase()));
+      let name = 'new_table', i = 2;
+      while (existing.has(name.toLowerCase())) name = `new_table_${i++}`;
+      const newSql = sqlEl.value + `\n\nCREATE TABLE ${name} (\n  id INT PRIMARY KEY\n);`;
+      sqlEl.value = newSql;
+      rebuild({ arrange: true });
+      renderVisualBuilder();
+    });
+    vbTables.appendChild(emptyAddBtn);
     return;
   }
-  vbEmpty.hidden = true;
 
   tables.forEach(table => {
     const card = document.createElement('div');
@@ -953,6 +967,24 @@ function renderVisualBuilder() {
     card.append(header, body);
     vbTables.appendChild(card);
   });
+
+  // Add table button at the bottom
+  const addTableBtn = document.createElement('button');
+  addTableBtn.className = 'vb-add-col-btn';
+  addTableBtn.style.borderColor = 'var(--accent)';
+  addTableBtn.style.color = 'var(--accent)';
+  addTableBtn.textContent = '+ Add table';
+  addTableBtn.addEventListener('click', () => {
+    const fresh = parseSchema(sqlEl.value, 'sql');
+    const existing = new Set(fresh.tables.map(t => t.name.toLowerCase()));
+    let name = 'new_table', i = 2;
+    while (existing.has(name.toLowerCase())) name = `new_table_${i++}`;
+    const newSql = sqlEl.value + `\n\nCREATE TABLE ${name} (\n  id INT PRIMARY KEY\n);`;
+    sqlEl.value = newSql;
+    rebuild({ arrange: true });
+    renderVisualBuilder();
+  });
+  vbTables.appendChild(addTableBtn);
 }
 
 $('vb-add-table')?.addEventListener('click', () => {
