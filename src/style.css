@@ -319,6 +319,7 @@ a.btn { text-decoration: none; color: var(--text); }
   overflow-y: auto;
   background: var(--bg);
 }
+.visual-builder[hidden] { display: none !important; }
 .vb-empty {
   flex: 1;
   display: grid;
