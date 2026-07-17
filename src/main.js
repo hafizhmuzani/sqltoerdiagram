@@ -777,11 +777,13 @@ function setEditorMode(mode) {
     visualBuilder.hidden = true;
     editorPane.style.width = 'var(--editor-w)';
     splitter.style.display = '';
+    statusEl.style.display = 'none'; // Sembunyikan status di Code mode
   } else if (mode === 'visual') {
     editorStack.hidden = true;
     visualBuilder.hidden = false;
     editorPane.style.width = '480px';
     splitter.style.display = '';
+    statusEl.style.display = ''; // Tampilkan status di Visual mode
     renderVisualBuilder();
   }
   diagram.resize();
