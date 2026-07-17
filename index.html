@@ -152,15 +152,16 @@
           <div class="tablist" role="tablist" aria-label="Editor mode">
             <button class="tab active" role="tab" id="tab-code" data-mode="code" aria-selected="true" aria-controls="panel-code">Code</button>
             <button class="tab" role="tab" id="tab-visual" data-mode="visual" aria-selected="false" aria-controls="panel-visual">Visual</button>
-
           </div>
-          <span id="status" class="status"></span>
         </div>
-        <button id="btn-collapse-sql" class="icon-btn" title="Hide SQL panel" aria-label="Hide SQL panel" data-umami-event="hide-sql">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/>
-          </svg>
-        </button>
+        <div class="pane-head-right" style="display: flex; align-items: center; gap: 10px;">
+          <span id="status" class="status"></span>
+          <button id="btn-collapse-sql" class="icon-btn" title="Hide SQL panel" aria-label="Hide SQL panel" data-umami-event="hide-sql">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="editor-stack" id="editor-stack">
         <pre class="hl" aria-hidden="true"><code id="hl"></code></pre>
@@ -168,7 +169,28 @@
           placeholder="Paste SQL (CREATE TABLE), BigQuery WITH…, Prisma, SQLAlchemy, or Sequelize…"></textarea>
       </div>
       <div id="visual-builder" class="visual-builder" hidden>
-        <div id="vb-tables" class="vb-tables-list"></div>
+        <div class="vb-layout">
+          <div id="vb-tables" class="vb-tables-list"></div>
+          <div id="vb-info" class="vb-info-panel">
+            <div class="vb-info-section">
+              <div class="vb-info-label">Active Tables</div>
+              <div id="vb-active-tables" class="vb-info-value">0</div>
+            </div>
+            <div class="vb-info-section">
+              <div class="vb-info-label">Total Columns</div>
+              <div id="vb-total-cols" class="vb-info-value">0</div>
+            </div>
+            <div class="vb-info-section">
+              <div class="vb-info-label">Relations</div>
+              <div id="vb-total-rels" class="vb-info-value">0</div>
+            </div>
+            <div class="vb-info-divider"></div>
+            <div class="vb-info-section">
+              <div class="vb-info-label">Relation List</div>
+              <div id="vb-rel-list" class="vb-rel-list"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
