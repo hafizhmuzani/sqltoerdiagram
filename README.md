@@ -120,7 +120,8 @@ Select **BigQuery** from the dialect dropdown to work with BigQuery SQL instead 
 
 - **Vite** — build + dev server.
 - **@dagrejs/dagre** — layered auto-layout.
-- Custom canvas renderer + SQL DDL parser (no heavy SQL-parser dependency).
+- **Custom canvas renderer** + **custom SQL DDL parser** (no heavy parser dependency).
+- **Interactive Visual Builder** — edit and sync schemas without SQL code.
 
 ## Shortcuts
 
