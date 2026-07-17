@@ -754,6 +754,141 @@ window.addEventListener('mouseup', () => {
   if (dragSplit) { dragSplit = null; document.body.style.cursor = ''; }
 });
 
+// ---- tablist switching (Code / Visual / Split) ----
+const tabButtons = document.querySelectorAll('.tablist .tab');
+const editorStack = $('editor-stack');
+const visualBuilder = $('visual-builder');
+const vbTables = $('vb-tables');
+const vbEmpty = visualBuilder.querySelector('.vb-empty');
+
+let editorMode = localStorage.getItem('schemacanvas-mode') || 'code';
+
+function setEditorMode(mode) {
+  editorMode = mode;
+  localStorage.setItem('schemacanvas-mode', mode);
+
+  tabButtons.forEach(btn => {
+    const active = btn.dataset.mode === mode;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+
+  if (mode === 'code') {
+    editorStack.hidden = false;
+    visualBuilder.hidden = true;
+    editorPane.style.width = 'var(--editor-w)';
+    splitter.style.display = '';
+  } else if (mode === 'visual') {
+    editorStack.hidden = true;
+    visualBuilder.hidden = false;
+    editorPane.style.width = 'var(--editor-w)';
+    splitter.style.display = '';
+    renderVisualBuilder();
+  } else if (mode === 'split') {
+    // split mode: show both stacked vertically in the sidebar
+    editorStack.hidden = false;
+    visualBuilder.hidden = false;
+    editorPane.style.width = '480px';
+    splitter.style.display = '';
+    renderVisualBuilder();
+  }
+  diagram.resize();
+}
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setEditorMode(btn.dataset.mode);
+  });
+});
+
+// A simple UI builder to modify tables list interactively (add columns, etc)
+function renderVisualBuilder() {
+  if (!diagram.model || !diagram.model.tables) return;
+  const tables = diagram.model.tables;
+  vbTables.innerHTML = '';
+  if (tables.length === 0) {
+    vbEmpty.hidden = false;
+    return;
+  }
+  vbEmpty.hidden = true;
+
+  tables.forEach(table => {
+    const card = document.createElement('div');
+    card.className = 'vb-table-card';
+    card.style.border = '1px solid var(--border)';
+    card.style.background = 'var(--panel)';
+    card.style.padding = '12px';
+    card.style.marginBottom = '10px';
+    card.style.borderRadius = '2px';
+
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.justifyContent = 'space-between';
+    header.style.alignItems = 'center';
+    header.style.marginBottom = '8px';
+
+    const title = document.createElement('strong');
+    title.textContent = table.name;
+    title.style.fontSize = '12px';
+    title.style.textTransform = 'uppercase';
+
+    const addColBtn = document.createElement('button');
+    addColBtn.className = 'btn ghost';
+    addColBtn.style.padding = '2px 6px';
+    addColBtn.style.fontSize = '10px';
+    addColBtn.textContent = '+ Col';
+    addColBtn.onclick = () => {
+      diagram.onAddColumn(table.key);
+      renderVisualBuilder();
+    };
+
+    header.append(title, addColBtn);
+    card.appendChild(header);
+
+    const colsList = document.createElement('div');
+    colsList.style.display = 'flex';
+    colsList.style.flexDirection = 'column';
+    colsList.style.gap = '4px';
+
+    table.columns.forEach(col => {
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.justifyContent = 'space-between';
+      row.style.alignItems = 'center';
+      row.style.fontSize = '11px';
+      row.style.color = 'var(--muted)';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = col.name + (col.pk ? ' (PK)' : '') + (col.fk ? ' (FK)' : '');
+      nameSpan.style.fontFamily = 'ui-monospace, monospace';
+
+      const typeSpan = document.createElement('span');
+      typeSpan.textContent = col.type || 'int';
+      typeSpan.style.fontFamily = 'ui-monospace, monospace';
+
+      row.append(nameSpan, typeSpan);
+      colsList.appendChild(row);
+    });
+
+    card.appendChild(colsList);
+    vbTables.appendChild(card);
+  });
+}
+
+$('vb-add-table')?.addEventListener('click', () => {
+  const sql = sqlEl.value;
+  const fresh = parseSchema(sql, 'sql');
+  const existing = new Set(fresh.tables.map(t => t.name.toLowerCase()));
+  let name = 'new_table', i = 2;
+  while (existing.has(name.toLowerCase())) name = `new_table_${i++}`;
+
+  const newSql = sql + `\n\nCREATE TABLE ${name} (\n  id BIGINT PRIMARY KEY\n);`;
+  sqlEl.value = newSql;
+  rebuild({ arrange: true });
+  renderVisualBuilder();
+});
+
 window.addEventListener('resize', () => diagram.resize());
 
 // keyboard shortcuts
@@ -783,7 +918,7 @@ if (isEmbed) {
   brand.className = 'embed-brand';
   brand.target = '_blank';
   brand.rel = 'noopener';
-  brand.href = location.origin + location.pathname + location.hash; // open full editor, same diagram
+  brand.href = location.origin + location.pathname + location.hash;
   brand.title = 'Open in SchemaCanvas';
   brand.innerHTML =
     '<span class="logo" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
@@ -791,6 +926,9 @@ if (isEmbed) {
     'schemacanvas.com';
   document.querySelector('.canvas-pane').appendChild(brand);
 }
+
+// ---- init editor mode tab from localStorage ----
+setEditorMode(editorMode);
 
 // ---- boot: shared link > last session > example ----
 (async () => {

@@ -263,7 +263,7 @@ a.btn { text-decoration: none; color: var(--text); }
 .menu-item.active { color: var(--accent); font-weight: 600; }
 .menu-item.active::after { content: "✓"; font-size: 12px; }
 
-/* ---------- layout ---------- */
+/* layout */
 .layout {
   display: flex;
   flex: 1 1 auto;
@@ -277,6 +277,76 @@ a.btn { text-decoration: none; color: var(--text); }
   background: var(--panel);
   border-right: 1px solid var(--border);
 }
+
+/* Tabs */
+.tablist {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--panel-2);
+  padding: 3px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+.tab {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.tab:hover {
+  color: var(--text);
+}
+.tab.active {
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Visual Builder Placeholder */
+.visual-builder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: var(--bg);
+}
+.vb-empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.vb-card {
+  text-align: center;
+  max-width: 280px;
+  padding: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.vb-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.vb-card p {
+  margin: 0 0 16px 0;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .layout.sql-hidden .editor-pane,
 .layout.sql-hidden .splitter { display: none; }
 .pane-head {

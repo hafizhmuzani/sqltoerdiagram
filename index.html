@@ -149,7 +149,11 @@
     <section class="editor-pane" id="editor-pane">
       <div class="pane-head">
         <div class="pane-head-left">
-          <span class="pane-title">SQL schema</span>
+          <div class="tablist" role="tablist" aria-label="Editor mode">
+            <button class="tab active" role="tab" id="tab-code" data-mode="code" aria-selected="true" aria-controls="panel-code">Code</button>
+            <button class="tab" role="tab" id="tab-visual" data-mode="visual" aria-selected="false" aria-controls="panel-visual">Visual</button>
+            <button class="tab" role="tab" id="tab-split" data-mode="split" aria-selected="false" aria-controls="panel-split">Split</button>
+          </div>
           <span id="status" class="status"></span>
         </div>
         <button id="btn-collapse-sql" class="icon-btn" title="Hide SQL panel" aria-label="Hide SQL panel" data-umami-event="hide-sql">
@@ -158,10 +162,22 @@
           </svg>
         </button>
       </div>
-      <div class="editor-stack">
+      <div class="editor-stack" id="editor-stack">
         <pre class="hl" aria-hidden="true"><code id="hl"></code></pre>
         <textarea id="sql" spellcheck="false" autocomplete="off" autocapitalize="off"
           placeholder="Paste SQL (CREATE TABLE), BigQuery WITH…, Prisma, SQLAlchemy, or Sequelize…"></textarea>
+      </div>
+      <div id="visual-builder" class="visual-builder" hidden>
+        <div class="vb-empty">
+          <div class="vb-card">
+            <h3>Visual Builder</h3>
+            <p>Modify columns and schemas interactively. Your changes automatically sync with the SQL code.</p>
+            <div class="vb-actions">
+              <button id="vb-add-table" class="btn primary">Add Table</button>
+            </div>
+          </div>
+        </div>
+        <div id="vb-tables" class="vb-tables-list"></div>
       </div>
     </section>
 
